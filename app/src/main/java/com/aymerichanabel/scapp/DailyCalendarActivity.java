@@ -11,7 +11,10 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import java.time.LocalTime;
 import java.time.format.TextStyle;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class DailyCalendarActivity extends AppCompatActivity
@@ -47,6 +50,26 @@ public class DailyCalendarActivity extends AppCompatActivity
         monthDayText.setText(CalendarUtils.monthDayFromDate(selectedDate));
         String dayOfWeek = selectedDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.getDefault());
         dayOfWeekTV.setText(dayOfWeek);
+        setHourAdapter();
+    }
+
+    private void setHourAdapter()
+    {
+        HourAdapter hourAdapter = new HourAdapter(getApplicationContext(), hourEventList());
+        hourListView.setAdapter(hourAdapter);
+    }
+
+    private ArrayList<HourEvent> hourEventList()
+    {
+        ArrayList<HourEvent> list = new ArrayList<>();
+        for(int hour = 0; hour < 24; hour++)
+        {
+            LocalTime time = LocalTime.of(hour, 0);
+            ArrayList<Event> events = Event.eventsForDateAndTime(selectedDate, time);
+            HourEvent hourEvent = new HourEvent(time, events);
+            list.add(hourEvent);
+        }
+        return list;
     }
 
     public void peviousDayAction(View view)
